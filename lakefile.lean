@@ -15,6 +15,9 @@ lean_lib «LeanBook» where
 require mdgen from git
   "https://github.com/Seasawher/mdgen" @ "main"
 
+require plausible from git
+  "https://github.com/leanprover-community/plausible" @ "main"
+
 /-- Execute the given string in a shell -/
 def runCmd (input : String) : IO Unit := do
   let cmdList := input.splitOn " "
