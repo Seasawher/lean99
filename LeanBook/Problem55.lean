@@ -11,33 +11,31 @@
 > 完全平衡二分木は（高さ）平衡二分木とは異なる。
 -/
 
+/-- 2分木 -/
 inductive BinTree (α : Type) where
   | empty : BinTree α
   | node : α → BinTree α → BinTree α → BinTree α
 deriving Repr
 
+/-- 2分木の葉 -/
 def leaf {α : Type} (a : α) : BinTree α := .node a .empty .empty
 
+/-- 2分木のノード数 -/
 def BinTree.nodes {α : Type} : BinTree α → Nat
 | .empty => 0
 | .node _ l r => 1 + l.nodes + r.nodes
 
+/-- 2分木が完全平衡か判定 -/
 def BinTree.isCBalanced {α : Type} : BinTree α → Bool
   | .empty => true
   | .node _ l r =>
     Int.natAbs ((l.nodes : Int) - (r.nodes : Int)) ≤ 1 && l.isCBalanced && r.isCBalanced
-
-namespace ListMonad
 
 /-- List型のモナドインスタンス -/
 instance : Monad List where
   pure x := [x]
   bind l f := l.flatMap f
   map f l := l.map f
-
-end ListMonad
-
-open scoped ListMonad
 
 /-- ノード数が `x` の完全平衡二分木をすべて構成する -/
 partial def cbalTree (x : Nat) : List (BinTree Unit) :=
@@ -52,10 +50,13 @@ partial def cbalTree (x : Nat) : List (BinTree Unit) :=
     let right ← cbalTree (n - i)
     pure (BinTree.node () left right)
 
-#eval (cbalTree 3).length = 1
-#eval (cbalTree 3)|>.map BinTree.isCBalanced |>.and
-#eval (cbalTree 4)|>.map BinTree.isCBalanced |>.and
-#eval (cbalTree 4).length = 4
-#eval (cbalTree 5)|>.map BinTree.isCBalanced |>.and
-#eval (cbalTree 6)|>.map BinTree.isCBalanced |>.and
-#eval (cbalTree 7).length = 1
+-- `cbalTree` で生成される木の数を確認
+#guard (cbalTree 3).length = 1
+#guard (cbalTree 4).length = 4
+#guard (cbalTree 7).length = 1
+
+-- `cbalTree` で生成される木はすべて完全平衡
+#guard (cbalTree 3)|>.map BinTree.isCBalanced |>.and
+#guard (cbalTree 4)|>.map BinTree.isCBalanced |>.and
+#guard (cbalTree 5)|>.map BinTree.isCBalanced |>.and
+#guard (cbalTree 6)|>.map BinTree.isCBalanced |>.and
