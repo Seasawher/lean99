@@ -37,19 +37,6 @@ end ListMonad
 
 open scoped ListMonad
 
-/-- ノード数が `x` の完全平衡二分木をすべて構成する -/
-partial def cbalTree (x : Nat) : List (BinTree Unit) :=
-  match x with
-  | 0 => [.empty]
-  | n + 1 => do
-    let q := n / 2
-    let r := n % 2
-    let indices := List.range (q+r+1) |>.drop q
-    let i ← indices
-    let left ← cbalTree i
-    let right ← cbalTree (n - i)
-    pure (BinTree.node () left right)
-
 variable {β : Type}
 
 def List.product (as : List α) (bs : List β) : List (α × β) := do
