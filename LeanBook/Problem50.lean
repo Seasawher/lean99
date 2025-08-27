@@ -1,15 +1,14 @@
 /- # Problem 50
-(Hard 🌟🌟🌟) Huffman codes.
 
-We suppose a set of symbols with their frequencies, given as a list of `fr(S,F)` terms.
+（難易度 🌟🌟🌟）ハフマン符号
 
-Example: `[fr(a,45), fr(b,13), fr(c,12), fr(d,16), fr(e,9), fr(f,5)]`.
+記号とその出現頻度の集合が、`fr(S,F)` という形の項のリストで与えられているとする。
 
-Our objective is to construct a list `hc(S,C)` terms, where `C` is the Huffman code word for the symbol `S`.
+例：`[fr(a,45), fr(b,13), fr(c,12), fr(d,16), fr(e,9), fr(f,5)]`。
+
+目的は、`hc(S,C)` という形の項のリストを構成することである。ここで `C` は記号 `S` に対するハフマン符号語を表す。
 -/
 
-/-- Insert an element in a way that
-does not break the order of the sorted list. -/
 def orderedInsert {α : Type} [Ord α] (a : α) : List α → List α
   | [] => [a]
   | b :: l =>
@@ -26,7 +25,7 @@ def insertionSort {α : Type} [Ord α] : List α → List α
 #check insertionSort
 
 
-/-- Huffman Tree -/
+/-- ハフマン木 -/
 inductive HuffTree where
   | node (left : HuffTree) (right : HuffTree) (weight : Nat)
   | Leaf (c : Char) (weight : Nat)
@@ -61,10 +60,6 @@ partial def HuffTree.merge (trees : List HuffTree) : List HuffTree :=
   | t1 :: t2 :: rest =>
     let t' := HuffTree.node t1 t2 (t1.weight + t2.weight)
     HuffTree.merge (t' :: rest)
-
--- This function is not used in the solution
-def HuffTree.ofString (msg : String) : HuffTree :=
-  msg.toLeaves |> HuffTree.merge |>.head!
 
 abbrev Code := String
 
