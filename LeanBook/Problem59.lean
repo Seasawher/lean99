@@ -8,36 +8,9 @@
 
 与えられた要素と与えられた最大高さに対して、すべての高さ平衡二分木のリストを構成せよ。
 -/
+import LeanBook.Problem58
 
-/-- 二分木 -/
-inductive BinTree (α : Type) where
-  | empty : BinTree α
-  | node : α → BinTree α → BinTree α → BinTree α
-
-deriving Repr
-
-def leaf {α : Type} (a : α) : BinTree α := .node a .empty .empty
-
-variable {α : Type} [ToString α]
-
-def BinTree.height (t : BinTree α) : Nat :=
-  match t with
-  | .empty => 0
-  | .node _ l r => 1 + max l.height r.height
-
-namespace ListMonad
-
-/-- List型のモナドインスタンス -/
-instance : Monad List where
-  pure x := [x]
-  bind l f := l.flatMap f
-  map f l := l.map f
-
-end ListMonad
-
-open scoped ListMonad
-
-variable {β : Type}
+variable {α β : Type}
 
 def List.product (as : List α) (bs : List β) : List (α × β) := do
   let a ← as
