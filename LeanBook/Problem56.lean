@@ -1,15 +1,11 @@
 /-
 # 問題 56
 
-二分木が「根を通る垂直線で左右の部分木が鏡像関係にある」とき、その木を対称（symmetric）と呼ぶことにする。与えられた二分木が対称かどうか判定する述語 symmetric/1 を実装せよ。ヒント: まず2つの木が鏡像関係かどうか判定する mirror/2 を実装せよ。ノードの内容ではなく構造だけに注目する。
+二分木が「根を通る垂直線で左右の部分木が鏡像関係にある」とき、その木を対称（symmetric）と呼ぶことにする。与えられた二分木が対称かどうか判定する述語 symmetric/1 を実装せよ。
+
+> ヒント: まず2つの木が鏡像関係かどうか判定する mirror/2 を実装せよ。ノードの内容ではなく構造だけに注目する。
 -/
-
-inductive BinTree (α : Type) where
-  | empty : BinTree α
-  | node : α → BinTree α → BinTree α → BinTree α
-deriving Repr
-
-def leaf {α : Type} (a : α) : BinTree α := .node a .empty .empty
+import LeanBook.Problem55
 
 /-- #check の結果表示用 -/
 @[app_unexpander BinTree.node]
