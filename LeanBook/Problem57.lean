@@ -3,25 +3,7 @@
 
 講義第4章で開発した add/3 を使って、整数リストから二分探索木を構成する述語を実装せよ。
 -/
-
-inductive BinTree (α : Type) where
-  | empty : BinTree α
-  | node : α → BinTree α → BinTree α → BinTree α
-
-def leaf {α : Type} (a : α) : BinTree α := .node a .empty .empty
-
-/-- #check の結果表示用 -/
-@[app_unexpander BinTree.node]
-def leaf.unexpander : Lean.PrettyPrinter.Unexpander
-  | `($_ $a BinTree.empty BinTree.empty) => `(leaf $a)
-  | _ => throw ()
-
-/-- #eval の結果表示用 -/
-def BinTree.toString {α : Type} [ToString α] (t : BinTree α) : String :=
-  match t with
-  | .node v .empty .empty => s!"leaf {v}"
-  | .node v l r => s!"BinTree.node {v} ({toString l}) ({toString r})"
-  | .empty => "empty"
+import LeanBook.Problem56
 
 instance {α : Type} [ToString α] : ToString (BinTree α) := ⟨BinTree.toString⟩
 
