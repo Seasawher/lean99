@@ -17,7 +17,7 @@ N = 15 の場合、高さ平衡二分木はいくつ存在するかを求めよ�
 
 ## 回答
 
-### minN
+### minNodes
 
 `MinNodes` 関数は `MinNodes (h + 2) = MinNodes (h + 1) + MinNodes h + 1` という漸化式を満たすことがわかる。したがって、`MinNodes h` は次のように計算できる。
 -/
