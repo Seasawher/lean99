@@ -17,13 +17,35 @@ N = 15 の場合、高さ平衡二分木はいくつ存在するかを求めよ�
 
 ## 回答
 
-`MinN` 関数は `MinN (h + 2) = MinN (h + 1) + MinN h + 1` という漸化式を満たすことがわかる。したがって、`MinN h` は次のように計算できる。
+### minN
+
+`MinNodes` 関数は `MinNodes (h + 2) = MinNodes (h + 1) + MinNodes h + 1` という漸化式を満たすことがわかる。したがって、`MinNodes h` は次のように計算できる。
 -/
 import LeanBook.Problem59
 
-def MinN (h : Nat) : Nat :=
+def MinNodes (h : Nat) : Nat :=
   match h with
   | 0 => 0
   | 1 => 1
-  | h + 2 => MinN (h + 1) + MinN h + 1
+  | h + 2 => MinNodes (h + 1) + MinNodes h + 1
 
+#guard MinNodes 1 = 1
+#guard MinNodes 2 = 2
+#guard MinNodes 3 = 4
+
+/- ### maxHeight
+
+`maxHeight` と `MinNodes` の間には、$maxHeight(N) = max_{H} \{ minNodes(H) ≤ N \}$ という関係式が成り立つ。
+したがって、`maxHeight` は次のように計算できる。
+-/
+
+def maxHeight (n : Nat) : Nat := Id.run do
+  let mut hight := 1
+  while MinNodes hight ≤ n do
+    hight := hight + 1
+  return hight - 1
+
+#guard maxHeight 1 = 1
+#guard maxHeight 2 = 2
+#guard maxHeight 3 = 2
+#guard maxHeight 4 = 3
