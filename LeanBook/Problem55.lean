@@ -10,16 +10,7 @@
 >
 > 完全平衡二分木は（高さ）平衡二分木とは異なる。
 -/
-
-/-- 2分木 -/
-inductive BinTree (α : Type) where
-  | empty
-  | node (val : α) (left right : BinTree α)
-
-/-- 2分木の葉 -/
-def BinTree.leaf {α : Type} (a : α) : BinTree α := .node a .empty .empty
-
-
+import LeanBook.BinTree
 
 /-- 2分木のノード数 -/
 def BinTree.nodes {α : Type} : BinTree α → Nat
