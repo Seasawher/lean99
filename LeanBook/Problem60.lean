@@ -13,7 +13,7 @@
 これで、主問題に取り組める：
 **与えられたノード数の高さ平衡二分木をすべて構成せよ。**
 
-N = 15 の場合、高さ平衡二分木はいくつ存在するかを求めよ。
+`N = 15` の場合、高さ平衡二分木はいくつ存在するかを求めよ。
 
 ## 回答
 
@@ -35,7 +35,7 @@ def MinNodes (h : Nat) : Nat :=
 
 /- ### maxHeight
 
-`maxHeight` と `MinNodes` の間には、$maxHeight(N) = max_{H} \{ minNodes(H) ≤ N \}$ という関係式が成り立つ。
+`maxHeight` と `MinNodes` の間には、`maxHeight(N) = max_{H} { minNodes(H) ≤ N }` という関係式が成り立つ。
 したがって、`maxHeight` は次のように計算できる。
 -/
 
@@ -49,3 +49,13 @@ def maxHeight (n : Nat) : Nat := Id.run do
 #guard maxHeight 2 = 2
 #guard maxHeight 3 = 2
 #guard maxHeight 4 = 3
+
+/- ### 回答
+
+よって以下のように計算ができる。
+-/
+
+def hbalTreeNodes (n : Nat) : List (BinTree Unit) :=
+  []
+
+#eval (hbalTreeNodes 15).length

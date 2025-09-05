@@ -28,11 +28,11 @@ def insertionSort {α : Type} [Ord α] : List α → List α
 /-- ハフマン木 -/
 inductive HuffTree where
   | node (left : HuffTree) (right : HuffTree) (weight : Nat)
-  | Leaf (c : Char) (weight : Nat)
+  | leaf (c : Char) (weight : Nat)
 deriving Inhabited, Repr
 
 def HuffTree.weight : HuffTree → Nat
-  | Leaf _ w => w
+  | leaf _ w => w
   | node _ _ w => w
 
 def HuffTree.compare (s s' : HuffTree) : Ordering :=
@@ -50,7 +50,7 @@ def String.freq (s : String) (c : Char) := s.data.filter (· == c) |>.length
 
 def String.toLeaves (s : String) : List HuffTree :=
   let allChars : List Char := s.data.eraseDups
-  allChars.map fun c => HuffTree.Leaf c (s.freq c)
+  allChars.map fun c => HuffTree.leaf c (s.freq c)
 
 partial def HuffTree.merge (trees : List HuffTree) : List HuffTree :=
   let sorted := HuffTree.sort trees
@@ -64,7 +64,7 @@ partial def HuffTree.merge (trees : List HuffTree) : List HuffTree :=
 abbrev Code := String
 
 def HuffTree.encode (c : Char) : HuffTree → Option Code
-  | .Leaf c' _ => if c = c' then some "" else none
+  | .leaf c' _ => if c = c' then some "" else none
   | .node l r _w =>
     match l.encode c, r.encode c with
     | none, some s => some ("1" ++ s)
@@ -73,7 +73,7 @@ def HuffTree.encode (c : Char) : HuffTree → Option Code
 
 
 def huffman (input : List (Char × Nat)) : List (Char × Code) :=
-  let leaves : List HuffTree := input.map (fun (c, w) => HuffTree.Leaf c w)
+  let leaves : List HuffTree := input.map (fun (c, w) => HuffTree.leaf c w)
   let tree : HuffTree := HuffTree.merge leaves |>.head!
   input.map (fun (c, _) => (c, tree.encode c |>.get!))
 

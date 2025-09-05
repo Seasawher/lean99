@@ -33,8 +33,8 @@ def BinTree.isSymmetric (t : BinTree α) : Bool :=
   | .empty => true
   | .node _ l r => mirror l r
 
-#guard BinTree.isSymmetric (leaf 'x')
+#guard BinTree.isSymmetric (.leaf 'x')
 
-#guard ! BinTree.isSymmetric (BinTree.node 'x' (leaf 'x') BinTree.empty)
+#guard ! BinTree.isSymmetric (BinTree.node 'x' (.leaf 'x') BinTree.empty)
 
-#guard BinTree.isSymmetric (BinTree.node 'x' (leaf 'x') (leaf 'x'))
+#guard BinTree.isSymmetric (BinTree.node 'x' (.leaf 'x') (.leaf 'x'))

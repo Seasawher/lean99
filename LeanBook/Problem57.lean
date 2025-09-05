@@ -44,6 +44,6 @@ where
     | .lt => BinTree.node v (insert l x) r
     | _ => BinTree.node v l (insert r x)
 
-#guard BinTree.node 3 (.node 2 (leaf 1) .empty) (.node 5 .empty (leaf 7)) |>.searchTree
+#guard BinTree.node 3 (.node 2 (.leaf 1) .empty) (.node 5 .empty (.leaf 7)) |>.searchTree
 
 #guard BinTree.searchTreeFromList [3, 2, 5, 7, 1] |>.searchTree

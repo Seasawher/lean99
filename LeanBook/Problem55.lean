@@ -13,17 +13,18 @@
 
 /-- 2分木 -/
 inductive BinTree (α : Type) where
-  | empty : BinTree α
-  | node : α → BinTree α → BinTree α → BinTree α
-deriving Repr
+  | empty
+  | node (val : α) (left right : BinTree α)
 
 /-- 2分木の葉 -/
-def leaf {α : Type} (a : α) : BinTree α := .node a .empty .empty
+def BinTree.leaf {α : Type} (a : α) : BinTree α := .node a .empty .empty
+
+
 
 /-- 2分木のノード数 -/
 def BinTree.nodes {α : Type} : BinTree α → Nat
-| .empty => 0
-| .node _ l r => 1 + l.nodes + r.nodes
+  | .empty => 0
+  | .node _ l r => 1 + l.nodes + r.nodes
 
 /-- 2分木が完全平衡か判定 -/
 def BinTree.isCBalanced {α : Type} : BinTree α → Bool

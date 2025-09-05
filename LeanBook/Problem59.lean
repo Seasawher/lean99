@@ -21,7 +21,7 @@ def List.product (as : List α) (bs : List β) : List (α × β) := do
 def hbalTrees (height : Nat) : List (BinTree Unit) :=
   match height with
   | 0 => [.empty]
-  | 1 => [leaf ()]
+  | 1 => [.leaf ()]
   | h + 2 =>
     let t1s := hbalTrees (h + 1)
     let t2s := hbalTrees h
