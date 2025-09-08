@@ -55,7 +55,7 @@ def maxHeight (n : Nat) : Nat := Id.run do
 よって以下のように計算ができる。
 -/
 
-def hbalTreeNodes (n : Nat) : List (BinTree Unit) :=
+def hbalTreeNodes (_n : Nat) : List (BinTree Unit) :=
   []
 
 #eval (hbalTreeNodes 15).length
