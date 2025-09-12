@@ -5,14 +5,6 @@
 -/
 import LeanBook.Problem57
 
-variable {α : Type}
-
-/-- List型のモナドインスタンス -/
-instance : Monad List where
-  pure x := [x]
-  bind l f := l.flatMap f
-  map f l := l.map f
-
 /-- ノード数が指定された対称かつ完全平衡な二分木をすべて構成する -/
 def symCbalTrees (n : Nat) : List (BinTree Unit) :=
   cbalTree n |>.filter BinTree.isSymmetric

@@ -11,15 +11,16 @@
 import LeanBook.Problem58
 
 /-- 高さが `height` の高さ平衡二分木をすべて構成する -/
-partial def hbalTrees (height : Nat) : List (BinTree Unit) :=
+partial def hbalTrees {α : Type} (a : α) (height : Nat) : List (BinTree α) :=
   match height with
   | 0 => [.empty]
-  | 1 => [.leaf ()]
+  | 1 => [.leaf a]
   | h + 2 => do
     let (hl, hr) ← [(h, h + 1), (h + 1, h + 1), (h + 1, h)]
-    let l ← hbalTrees hl
-    let r ← hbalTrees hr
-    return BinTree.node () l r
+    let l ← hbalTrees a hl
+    let r ← hbalTrees a hr
+    return BinTree.node a l r
 
-#guard (hbalTrees 2).length = 3
-#guard (hbalTrees 3).length = 15
+#guard (hbalTrees 'a' 2).length = 3
+#guard (hbalTrees 'a' 3).length = 15
+

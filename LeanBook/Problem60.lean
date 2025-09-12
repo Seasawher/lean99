@@ -55,6 +55,7 @@ def maxHeight (n : Nat) : Nat := Id.run do
 よって以下のように計算ができる。
 -/
 
+/-- 与えられたノード数の高さ平衡二分木をすべて構成する -/
 def hbalTreeNodes (_n : Nat) : List (BinTree Unit) :=
   []
 
