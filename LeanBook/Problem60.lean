@@ -39,6 +39,7 @@ def MinNodes (h : Nat) : Nat :=
 したがって、`maxHeight` は次のように計算できる。
 -/
 
+/-- 与えられたノード数`n`を持つ高さ平衡二分木の最大の高さ -/
 def maxHeight (n : Nat) : Nat := Id.run do
   let mut hight := 1
   while MinNodes hight ≤ n do
@@ -55,8 +56,27 @@ def maxHeight (n : Nat) : Nat := Id.run do
 よって以下のように計算ができる。
 -/
 
-/-- 与えられたノード数の高さ平衡二分木をすべて構成する -/
-def hbalTreeNodes (_n : Nat) : List (BinTree Unit) :=
-  []
+variable {α : Type}
 
-#eval (hbalTreeNodes 15).length
+-- Alternative のインスタンスにする
+instance : Alternative List where
+  failure := @List.nil
+  orElse l l' := List.append l (l' ())
+
+/-- 与えられたノード数の高さ平衡二分木をすべて構成する -/
+def hbalTreeNodes (a : α) (n : Nat) : List (BinTree α) := do
+  -- ノード数`n`の高さ平衡二分木の高さとしてあり得る値を網羅したリスト
+  let minHeight := Nat.log2 (n + 1)
+  let heightRange := List.range (1 + maxHeight n)
+    |>.drop minHeight
+  -- 高さを一つ選択
+  let height ← heightRange
+  -- 高さを指定すれば高さ平衡二分木は全列挙できるので、ひとつ選択する
+  let tree ← hbalTrees a height
+  -- ノード数が実際に`n`であるようなものだけフィルターする
+  guard <| tree.nodes = n
+  return tree
+
+#guard hbalTreeNodes 0 1 = [[tree| 0]]
+#guard hbalTreeNodes 0 2 = [[tree| 0 * (∅ + 0)], [tree| 0 * (0 + ∅)]]
+#guard (hbalTreeNodes 'x' 15).length = 1553
