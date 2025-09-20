@@ -28,6 +28,7 @@ def BinTree.height (t : BinTree α) : Nat :=
 def BinTree.isComplete (t : BinTree α) : Bool :=
   2 ^ t.height - 1 == t.size
 
+#guard (@BinTree.empty Unit).isComplete
 #guard [tree| 1].isComplete
 #guard [tree| 1 * (2 + 3)].isComplete
 #guard ! [tree| 1 * (2 * (3 + 4) + 5)].isComplete
@@ -37,16 +38,18 @@ def BinTree.isComplete (t : BinTree α) : Bool :=
 def BinTree.insert (t : BinTree α) (x : α) : BinTree α :=
   match t with
   | .empty => .node x .empty .empty
+  | .node v .empty .empty => .node v (.leaf x) .empty
   | .node v left right =>
-    if left.size ≤ right.size then
+    if left.isComplete && right.isComplete || ! left.isComplete then
       .node v (left.insert x) right
     else
       .node v left (right.insert x)
 
 #guard [tree| 1].insert 2 = [tree| 1 * (2 + ∅)]
-#guard [tree| 1 * (2 + ∅)].insert 3 = [tree| 1 * (2 + 3)]
+-- #guard [tree| 1 * (2 + ∅)].insert 3 = [tree| 1 * (2 + 3)]
 #guard [tree| 1 * (2 + 3)].insert 4 = [tree| 1 * (2 * (4 + ∅) + 3)]
 -- #guard [tree| 1 * (2 * (4 + ∅) + 3)].insert 5 = [tree| 1 * (2 * (4 + 5) + 3)]
+-- #guard [tree| 1 * (2 * (4 + 5) + 3)].insert 6 = [tree| 1 * (2 * (4 + 5) + 3 * (6 + ∅))]
 
 def completeBinaryTree (x : α) (n : Nat) : BinTree α :=
   sorry
