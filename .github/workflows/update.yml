@@ -4,11 +4,16 @@ on:
     - cron: "0 11 * * *"
   workflow_dispatch:
 
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
 jobs:
   update_lean:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Update Lean project
         uses: leanprover-community/lean-update@main

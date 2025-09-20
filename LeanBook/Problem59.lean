@@ -10,23 +10,17 @@
 -/
 import LeanBook.Problem58
 
-variable {α β : Type}
-
-def List.product (as : List α) (bs : List β) : List (α × β) := do
-  let a ← as
-  let b ← bs
-  return (a, b)
-
 /-- 高さが `height` の高さ平衡二分木をすべて構成する -/
-def hbalTrees (height : Nat) : List (BinTree Unit) :=
+partial def hbalTrees {α : Type} (a : α) (height : Nat) : List (BinTree α) :=
   match height with
   | 0 => [.empty]
-  | 1 => [.leaf ()]
-  | h + 2 =>
-    let t1s := hbalTrees (h + 1)
-    let t2s := hbalTrees h
-    let ts := List.product t1s t2s ++ List.product t2s t1s
-    ts.map fun (t1, t2) => BinTree.node () t1 t2
+  | 1 => [.leaf a]
+  | h + 2 => do
+    let (hl, hr) ← [(h, h + 1), (h + 1, h + 1), (h + 1, h)]
+    let l ← hbalTrees a hl
+    let r ← hbalTrees a hr
+    return BinTree.node a l r
 
-#guard (hbalTrees 2 |>.length) = 2
-#guard (hbalTrees 3 |>.length) = 4
+#guard (hbalTrees 'a' 2).length = 3
+#guard (hbalTrees 'a' 3).length = 15
+

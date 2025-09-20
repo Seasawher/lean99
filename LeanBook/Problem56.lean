@@ -7,19 +7,6 @@
 -/
 import LeanBook.Problem55
 
-/-- #check の結果表示用 -/
-@[app_unexpander BinTree.node]
-def leaf.unexpander : Lean.PrettyPrinter.Unexpander
-  | `($_ $a BinTree.empty BinTree.empty) => `(leaf $a)
-  | _ => throw ()
-
-/-- #eval の結果表示用 -/
-def BinTree.toString {α : Type} [ToString α] (t : BinTree α) : String :=
-  match t with
-  | .node v .empty .empty => s!"leaf {v}"
-  | .node v l r => s!"BinTree.node {v} ({toString l}) ({toString r})"
-  | .empty => "empty"
-
 variable {α : Type}
 
 def BinTree.mirror (s t : BinTree α) : Bool :=
@@ -33,8 +20,6 @@ def BinTree.isSymmetric (t : BinTree α) : Bool :=
   | .empty => true
   | .node _ l r => mirror l r
 
-#guard BinTree.isSymmetric (.leaf 'x')
-
-#guard ! BinTree.isSymmetric (BinTree.node 'x' (.leaf 'x') BinTree.empty)
-
-#guard BinTree.isSymmetric (BinTree.node 'x' (.leaf 'x') (.leaf 'x'))
+#guard [tree| 1].isSymmetric
+#guard ! [tree| 1 * (2 + ∅)].isSymmetric
+#guard [tree| 1 * (2 + 2)].isSymmetric
