@@ -61,6 +61,6 @@ level-orderに要素を追加していく。
 def completeBinaryTree (x : α) (n : Nat) : BinTree α :=
   List.range n |>.foldl (fun t _ => t.insert x) BinTree.empty
 
-#eval completeBinaryTree 'x' 3
-#eval completeBinaryTree 'x' 7
-#eval completeBinaryTree 'x' 15
+#guard completeBinaryTree 0 3 = [tree| 0 * (0 + 0)]
+#guard completeBinaryTree 0 7 = [tree| 0 * (0 * (0 + 0) + 0 * (0 + 0))]
+#guard completeBinaryTree 0 15 = [tree| 0 * (0 * (0 * (0 + 0) + 0 * (0 + 0)) + 0 * (0 * (0 + 0) + 0 * (0 + 0)))]
