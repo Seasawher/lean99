@@ -3,8 +3,10 @@
 与えられたノード数の完全二分木を構成しなさい。
 -/
 import LeanBook.Problem55
+import Lean
 
 variable {α : Type}
+variable {m : Type → Type} [Monad m]
 
 /-- 2分木のノード数 -/
 def BinTree.size (t : BinTree α) : Nat :=
@@ -40,32 +42,25 @@ def BinTree.insert (t : BinTree α) (x : α) : BinTree α :=
   | .empty => .node x .empty .empty
   | .node v .empty .empty => .node v (.leaf x) .empty
   | .node v left right =>
-    if left.height < right.height then
+    if ! left.isComplete || (left.isComplete && right.isComplete && left.height = right.height) then
       .node v (left.insert x) right
-    else if left.height = right.height then
-      if left.isComplete && right.isComplete then
-        .node v (left.insert x) right
-      else if ! left.isComplete then
-        .node v (left.insert x) right
-      else
-        .node v left (right.insert x)
     else
       .node v left (right.insert x)
-
-#eval [tree| 1].insert 2
-#eval [tree| 1 * (2 + 3)].insert 4
-#eval [tree| 1 * (2 * (4 + ∅) + 3)].insert 5
-#eval [tree| 1 * (2 * (4 + 5) + 3 * (6 + ∅))].insert 7
 
 #guard [tree| 1].insert 2 = [tree| 1 * (2 + ∅)]
 #guard [tree| 1 * (2 + ∅)].insert 3 = [tree| 1 * (2 + 3)]
 #guard [tree| 1 * (2 + 3)].insert 4 = [tree| 1 * (2 * (4 + ∅) + 3)]
--- #guard [tree| 1 * (2 * (4 + ∅) + 3)].insert 5 = [tree| 1 * (2 * (4 + 5) + 3)]
+#guard [tree| 1 * (2 * (4 + ∅) + 3)].insert 5 = [tree| 1 * (2 * (4 + 5) + 3)]
 #guard [tree| 1 * (2 * (4 + 5) + 3)].insert 6 = [tree| 1 * (2 * (4 + 5) + 3 * (6 + ∅))]
 #guard [tree| 1 * (2 * (4 + 5) + 3 * (6 + ∅))].insert 7 = [tree| 1 * (2 * (4 + 5) + 3 * (6 + 7))]
+#guard [tree| 1 * (2 * (4 + 5) + 3 * (6 + 7))].insert 8 = [tree| 1 * (2 * (4 * (8 + ∅) + 5) + 3 * (6 + 7))]
 
+/-- ノード数がnの二分木を構成する。
+level-orderに要素を追加していく。
+ノード数が`2^n-1`のときには完全二分木になる。 -/
 def completeBinaryTree (x : α) (n : Nat) : BinTree α :=
   List.range n |>.foldl (fun t _ => t.insert x) BinTree.empty
 
+#eval completeBinaryTree 'x' 3
 #eval completeBinaryTree 'x' 7
-#eval completeBinaryTree 'x' 10
+#eval completeBinaryTree 'x' 15
