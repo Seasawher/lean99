@@ -19,23 +19,13 @@ inductive BinTree (α : Type) where
   | node (val : α) (left right : BinTree α)
 deriving DecidableEq, BEq
 
+/-- 空の二分木 -/
 notation:max "∅" => BinTree.empty
 
 variable {α : Type}
 
 /-- 2分木の葉 -/
 def BinTree.leaf (a : α) : BinTree α := .node a ∅ ∅
-
-def BinTree.isEmpty (t : BinTree α) : Bool :=
-  match t with
-  | empty => true
-  | node _ _ _ => false
-
-def BinTree.isLeaf (t : BinTree α) : Bool :=
-  match t with
-  | empty => false
-  | node _ left right =>
-    left.isEmpty && right.isEmpty
 
 @[inherit_doc]
 notation:max "⟦" x "⟧" => BinTree.leaf x
@@ -45,11 +35,10 @@ notation:max "⟦" x "⟧" => BinTree.leaf x
 protected def BinTree.toString [ToString α] (t : BinTree α) : String :=
   match t with
   | empty => "∅"
+  | node val .empty .empty =>
+    toString val
   | node val left right =>
-    if t.isLeaf then
-      toString val
-    else
-      toString val ++ " * " ++ "(" ++ BinTree.toString left ++ " + " ++ BinTree.toString right ++ ")"
+    toString val ++ " * " ++ "(" ++ BinTree.toString left ++ " + " ++ BinTree.toString right ++ ")"
 
 instance [ToString α] : ToString (BinTree α) where
   toString := BinTree.toString
@@ -71,17 +60,26 @@ syntax "[tree| " bintree "]" : term
 
 /-- 基底ケース: `[tree| 42]` のようなものは葉に相当するので正しい構文 -/
 syntax num : bintree
+syntax str : bintree
+syntax char : bintree
 
 /-- 基底ケース: `[tree| ∅]` は空の木に相当するので正しい構文 -/
 syntax "∅" : bintree
 
 /-- 再帰ステップ -/
 syntax num " * " "(" bintree " + " bintree ")" : bintree
+syntax str " * " "(" bintree " + " bintree ")" : bintree
+syntax char " * " "(" bintree " + " bintree ")" : bintree
 
 macro_rules
   | `([tree| ∅]) => `(BinTree.empty)
   | `([tree| $num:num]) => `(BinTree.leaf $num)
+  | `([tree| $str:str]) => `(BinTree.leaf $str)
+  | `([tree| $char:char]) => `(BinTree.leaf $char)
   | `([tree| $v:num * ($l + $r)]) => `(BinTree.node $v [tree| $l] [tree| $r])
+  | `([tree| $v:str * ($l + $r)]) => `(BinTree.node $v [tree| $l] [tree| $r])
+  | `([tree| $v:char * ($l + $r)]) => `(BinTree.node $v [tree| $l] [tree| $r])
+
 
 #guard
   let actual := [tree| 1 * (2 + 3)]
@@ -102,15 +100,22 @@ macro_rules
 
 /- ### Repr の定義 -/
 
-def BinTree.reprPrec [ToString α] (tree : BinTree α) : String :=
-  "[tree| " ++ toString tree ++ "]"
+def BinTree.reprPrec [Repr α] (tree : BinTree α) : String :=
+  "[tree| " ++ helper tree ++ "]"
+where
+  helper : BinTree α → String
+  | .empty => "∅"
+  | .node v .empty .empty => reprStr v
+  | .node v left right =>
+    reprStr v ++ " * " ++ "(" ++ helper left ++ " + " ++ helper right ++ ")"
 
-instance [ToString α] : Repr (BinTree α) where
+instance [Repr α] : Repr (BinTree α) where
   reprPrec := fun tree _ => BinTree.reprPrec tree
 
 #eval [tree| 1 * (2 + 3)]
 #eval [tree| 12 * (2 + ∅)]
 #eval [tree| 1 * (2 * (3 + 4) + 5 * (6 + 7))]
+#eval [tree| 'x' * ('y' + 'z')]
 
 /- ## 回答 -/
 
