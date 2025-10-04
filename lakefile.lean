@@ -15,6 +15,9 @@ lean_lib «LeanBook» where
 require mdgen from git
   "https://github.com/Seasawher/mdgen" @ "main"
 
+require proofwidgets from git
+  "https://github.com/leanprover-community/ProofWidgets4.git" @ "main"
+
 require plausible from git
   "https://github.com/leanprover-community/plausible" @ "main"
 
