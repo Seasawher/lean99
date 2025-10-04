@@ -153,6 +153,14 @@ def BinTree.layout (t : BinTree α) : BinTree (α × (Nat × Nat)) :=
   | .empty => .empty
   | .node a .empty .empty =>
     .node (a, (step, step)) .empty .empty
+  | .node a .empty right =>
+    let rightLayout := layout right
+    let rightShifted := rightLayout.shift (fun (x, y) => (x + step, y + step))
+    .node (a, (step, step)) .empty rightShifted
+  | .node a left .empty =>
+    let leftLayout := layout left
+    let leftShifted := leftLayout.shift (fun (x, y) => (x, y + step))
+    .node (a, (left.width + 2) * step, step) leftShifted .empty
   | .node a left right =>
     let leftLayout := layout left
     let rightLayout := layout right
@@ -160,10 +168,58 @@ def BinTree.layout (t : BinTree α) : BinTree (α × (Nat × Nat)) :=
     let rightShifted := rightLayout.shift (fun (x, y) => (x + (left.width + 2) * step, y + step))
     .node (a, ((left.width + 2) * step, step)) leftShifted rightShifted
 
+#guard
+  let actual := (BinTree.layout [tree| 'a' * ('b' + ∅)]).toNodes
+  let expected := [
+    ('a', (2 * step, 1 * step)),
+    ('b', (1 * step, 2 * step))
+  ]
+  actual = expected
+
+#guard
+  let actual := (BinTree.layout [tree| 'a' * ('b' + 'c')]).toNodes
+  let expected := [
+    ('a', (2 * step, 1 * step)),
+    ('b', (1 * step, 2 * step)),
+    ('c', (3 * step, 2 * step))
+  ]
+  actual = expected
+
+#guard
+  let actual := (BinTree.layout [tree| 'a' * ('b' * ('c' + ∅) + ∅)]).toNodes
+  let expected := [
+    ('a', (3 * step, 1 * step)),
+    ('b', (2 * step, 2 * step)),
+    ('c', (1 * step, 3 * step))
+  ]
+  actual = expected
+
+#guard
+  let actual := (BinTree.layout [tree| 'a' * ('b' * (∅ + 'c') + ∅)]).toNodes
+  let expected := [
+    ('a', (3 * step, 1 * step)),
+    ('b', (1 * step, 2 * step)),
+    ('c', (2 * step, 3 * step))
+  ]
+  actual = expected
+
+#guard
+  let actual := (BinTree.layout [tree| 'a' * ('b' * (∅ + 'c') + 'd' * ('e' + ∅))]).toNodes
+  let expected := [
+    ('a', (3 * step, 1 * step)),
+    ('b', (1 * step, 2 * step)),
+    ('c', (2 * step, 3 * step)),
+    ('d', (5 * step, 2 * step)),
+    ('e', (4 * step, 3 * step))
+  ]
+  actual = expected
+
 #html BinTree.toHtmlFromLayout (BinTree.layout [tree| 1 * (∅ + 2)])
 #html BinTree.toHtmlFromLayout (BinTree.layout [tree| 1 * (2 + ∅)])
 #html BinTree.toHtmlFromLayout (BinTree.layout [tree| 1 * (2 + 3)])
+#html BinTree.toHtmlFromLayout (BinTree.layout [tree| 'a' * ('b' * (∅ + 'c') + ∅)])
 #html BinTree.toHtmlFromLayout (BinTree.layout [tree| 1 * (2 * (6 + 7) + 3 * (4 + 5))])
+#html BinTree.toHtmlFromLayout (BinTree.layout [tree| 'a' * ('b' * (∅ + 'c') + 'd' * ('e' + ∅))])
 #html
   let tree := [tree| 'n' * ('k' * ('c' * ('a' + 'h' * ('g' * ('e' + ∅) + ∅)) + 'm') + 'u' * ('p' * (∅ + 's' * ('q' + ∅)) + ∅))]
   BinTree.toHtmlFromLayout tree.layout
