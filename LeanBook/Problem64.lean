@@ -1,10 +1,16 @@
+/- # 問題64
+
+2分木を画像として描画するためのレイアウトを計算する。
+-/
+/- ## 2分木を画像として描画する
+
+2分木のレイアウト情報 `layout : BinTree (α × (Nat × Nat))` が与えられたときに、その描画情報を SVG 画像として描画する関数をまず実装する。
+-/
 import LeanBook.Problem63
 import ProofWidgets.Data.Svg
 import ProofWidgets.Component.HtmlDisplay
 
 open ProofWidgets Svg
-
-/- ## 2分木を画像として描画する -/
 
 variable {α : Type} [ToString α]
 
