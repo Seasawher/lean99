@@ -39,9 +39,9 @@ structure NodeData (f : Frame) where
   /-- ノードのラベル -/
   label : String
 
-def NodeData.ofPair (f : Frame) (pair : α × Nat × Nat) : NodeData f :=
+def NodeData.ofPair (f : Frame) (pair : α × Nat × Nat) (step : Float) : NodeData f :=
   let (a, x, y) := pair
-  { x := x.toFloat, y := y.toFloat, label := toString a }
+  { x := x.toFloat * step, y := y.toFloat * step, label := toString a }
 
 private def defaultFrame : Frame where
   xmin := 0
@@ -103,23 +103,23 @@ def BinTree.toEdges {β : Type} (tree : BinTree β) : List (β × β) :=
 
 #guard [tree| 1 * (2 + 3 * (4 + ∅))].toEdges = [(1, 2), (1, 3), (3, 4)]
 
-def BinTree.toElementsFromLayout (f : Frame) (config : Config) (tree : BinTree (α × (Nat × Nat))) : Array (Svg.Element f) :=
+def BinTree.toElementsFromLayout (f : Frame) (config : Config) (tree : BinTree (α × (Nat × Nat))) (step : Float) : Array (Svg.Element f) :=
   let nodes : Array (Element f) := tree.toNodes
-    |>.map (NodeData.ofPair f)
+    |>.map (NodeData.ofPair f (step := step))
     |>.toArray
     |>.map (fun node => createNodeElement f node config)
     |>.flatten
 
   let edges := tree.toEdges
-    |>.map (fun ((v1, x1, y1), (v2, x2, y2)) => (NodeData.ofPair f (v1, x1, y1), NodeData.ofPair f (v2, x2, y2)))
+    |>.map (fun ((v1, x1, y1), (v2, x2, y2)) => (NodeData.ofPair f (v1, x1, y1) step, NodeData.ofPair f (v2, x2, y2) step))
     |>.map (fun (parent, child) => createEdgeElement f parent child)
     |>.toArray
 
   edges ++ nodes
 
 /-- ２分木の描画情報が与えられたときに、それを SVG 画像として描画する -/
-def BinTree.toHtmlFromLayout (tree : BinTree (α × (Nat × Nat))) : Html :=
-  let svg : Svg defaultFrame := { elements := tree.toElementsFromLayout defaultFrame defaultConfig }
+def BinTree.toHtmlFromLayout (tree : BinTree (α × (Nat × Nat))) (step := 30.0) : Html :=
+  let svg : Svg defaultFrame := { elements := tree.toElementsFromLayout defaultFrame defaultConfig step }
   svg.toHtml
 
 #html
@@ -133,9 +133,6 @@ def BinTree.toHtmlFromLayout (tree : BinTree (α × (Nat × Nat))) : Html :=
 #html BinTree.toHtmlFromLayout (BinTree.leaf (3, (20, 20)))
 
 /- ## 回答 -/
-
-/-- グリッドの１刻み -/
-def step := 30
 
 /-- ２分木のレイアウト情報が渡されたときに、各ノードのレイアウト位置を一様にずらす -/
 def BinTree.shift (tree : BinTree (α × (Nat × Nat))) (shiftFn : Nat × Nat → Nat × Nat) : BinTree (α × (Nat × Nat)) :=
@@ -158,65 +155,65 @@ def BinTree.layout (t : BinTree α) : BinTree (α × (Nat × Nat)) :=
   match t with
   | .empty => .empty
   | .node a .empty .empty =>
-    .node (a, (step, step)) .empty .empty
+    .node (a, (1, 1)) .empty .empty
   | .node a .empty right =>
     let rightLayout := layout right
-    let rightShifted := rightLayout.shift (fun (x, y) => (x + step, y + step))
-    .node (a, (step, step)) .empty rightShifted
+    let rightShifted := rightLayout.shift (fun (x, y) => (x + 1, y + 1))
+    .node (a, (1, 1)) .empty rightShifted
   | .node a left .empty =>
     let leftLayout := layout left
-    let leftShifted := leftLayout.shift (fun (x, y) => (x, y + step))
-    .node (a, (left.width + 2) * step, step) leftShifted .empty
+    let leftShifted := leftLayout.shift (fun (x, y) => (x, y + 1))
+    .node (a, left.width + 2, 1) leftShifted .empty
   | .node a left right =>
     let leftLayout := layout left
     let rightLayout := layout right
-    let leftShifted := leftLayout.shift (fun (x, y) => (x, y + step))
-    let rightShifted := rightLayout.shift (fun (x, y) => (x + (left.width + 2) * step, y + step))
-    .node (a, ((left.width + 2) * step, step)) leftShifted rightShifted
+    let leftShifted := leftLayout.shift (fun (x, y) => (x, y + 1))
+    let rightShifted := rightLayout.shift (fun (x, y) => (x + (left.width + 2) * 1, y + 1))
+    .node (a, (left.width + 2, 1)) leftShifted rightShifted
 
 #guard
   let actual := (BinTree.layout [tree| 'a' * ('b' + ∅)]).toNodes
   let expected := [
-    ('a', (2 * step, 1 * step)),
-    ('b', (1 * step, 2 * step))
+    ('a', (2, 1)),
+    ('b', (1, 2))
   ]
   actual = expected
 
 #guard
   let actual := (BinTree.layout [tree| 'a' * ('b' + 'c')]).toNodes
   let expected := [
-    ('a', (2 * step, 1 * step)),
-    ('b', (1 * step, 2 * step)),
-    ('c', (3 * step, 2 * step))
+    ('a', (2, 1)),
+    ('b', (1, 2)),
+    ('c', (3, 2))
   ]
   actual = expected
 
 #guard
   let actual := (BinTree.layout [tree| 'a' * ('b' * ('c' + ∅) + ∅)]).toNodes
   let expected := [
-    ('a', (3 * step, 1 * step)),
-    ('b', (2 * step, 2 * step)),
-    ('c', (1 * step, 3 * step))
+    ('a', (3, 1)),
+    ('b', (2, 2)),
+    ('c', (1, 3))
   ]
   actual = expected
 
 #guard
   let actual := (BinTree.layout [tree| 'a' * ('b' * (∅ + 'c') + ∅)]).toNodes
   let expected := [
-    ('a', (3 * step, 1 * step)),
-    ('b', (1 * step, 2 * step)),
-    ('c', (2 * step, 3 * step))
+    ('a', (3, 1)),
+    ('b', (1, 2)),
+    ('c', (2, 3))
   ]
   actual = expected
 
 #guard
   let actual := (BinTree.layout [tree| 'a' * ('b' * (∅ + 'c') + 'd' * ('e' + ∅))]).toNodes
   let expected := [
-    ('a', (3 * step, 1 * step)),
-    ('b', (1 * step, 2 * step)),
-    ('c', (2 * step, 3 * step)),
-    ('d', (5 * step, 2 * step)),
-    ('e', (4 * step, 3 * step))
+    ('a', (3, 1)),
+    ('b', (1, 2)),
+    ('c', (2, 3)),
+    ('d', (5, 2)),
+    ('e', (4, 3))
   ]
   actual = expected
 
