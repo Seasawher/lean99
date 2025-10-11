@@ -26,7 +26,7 @@ def BinTree.root? (tree : BinTree α) : Option α :=
   | .empty => none
   | .node v _ _ => some v
 
-/-- 各ノードのy座標はそのまま。x座標を、左からではなくて、木の根ノードから見た相対位置とする -/
+/-- 各ノードのy座標はそのまま。x座標を、左からではなくて、木の根ノードから見た相対位置とする。-/
 def BinTree.relativeLayout (tree : BinTree (α × (Nat × Nat))) : BinTree (α × (Int × Int)) :=
   let root? := tree.root?
   match root? with
@@ -48,7 +48,7 @@ def BinTree.relativeLayout (tree : BinTree (α × (Nat × Nat))) : BinTree (α �
 def BinTree.expand (tree : BinTree (α × (Nat × Nat))) (level : Nat) : BinTree (α × (Nat × Nat)) :=
   -- 各ノードのy座標はそのまま
   -- x座標を、左からではなくて、木の根ノードから見た相対位置とする
-  let relativeLayout : BinTree (α × (Nat × Nat)) := sorry
+  let relativeLayout := tree.relativeLayout
   .empty
 
 -- テストコード

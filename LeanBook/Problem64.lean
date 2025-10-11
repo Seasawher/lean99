@@ -78,7 +78,9 @@ def createEdgeHtml (f := defaultFrame) (parent child : NodeData f) : Html :=
   let svg : Svg f := { elements := #[createEdgeElement f parent child] }
   svg.toHtml
 
-#html createEdgeHtml (parent := { x := 150, y := 30, label := "A" }) (child := { x := 100, y := 80, label := "B" })
+#html createEdgeHtml
+  (parent := { x := 150, y := 30, label := "A" })
+  (child := { x := 100, y := 80, label := "B" })
 
 /-- 二分木のノードを（木の構造を壊して）リストにする -/
 def BinTree.toNodes {β : Type} (tree : BinTree β) : List β :=
