@@ -54,32 +54,40 @@ instance [ToString α] : ToString (BinTree α) where
 
 /- ### 2分木を表現する構文 -/
 
+open Lean
+
 /-- 2分木を構成する構文カテゴリ -/
 declare_syntax_cat bintree
 syntax "[tree| " bintree "]" : term
 
-/-- 基底ケース: `[tree| 42]` のようなものは葉に相当するので正しい構文 -/
-syntax num : bintree
-syntax str : bintree
-syntax char : bintree
+/-- 木のラベル。ラベルとしては、数値リテラル・文字列リテラル・文字リテラルを許可する -/
+syntax tree_label := num <|> str <|> char
+
+/-- 基底ケース: `[tree| 42]`などは正しい構文 -/
+syntax tree_label : bintree
 
 /-- 基底ケース: `[tree| ∅]` は空の木に相当するので正しい構文 -/
 syntax "∅" : bintree
 
 /-- 再帰ステップ -/
-syntax num " * " "(" bintree " + " bintree ")" : bintree
-syntax str " * " "(" bintree " + " bintree ")" : bintree
-syntax char " * " "(" bintree " + " bintree ")" : bintree
+syntax tree_label " * " "(" bintree " + " bintree ")" : bintree
+
+/-- `tree_label`に属する構文を`term`に変換する -/
+def expandTreeLabel (stx : TSyntax `tree_label) : MacroM (TSyntax `term) :=
+  match stx with
+  | `(tree_label| $num:num) => `(term| $num)
+  | `(tree_label| $str:str) => `(term| $str)
+  | `(tree_label| $char:char) => `(term| $char)
+  | _ => Macro.throwUnsupported
 
 macro_rules
   | `([tree| ∅]) => `(BinTree.empty)
-  | `([tree| $num:num]) => `(BinTree.leaf $num)
-  | `([tree| $str:str]) => `(BinTree.leaf $str)
-  | `([tree| $char:char]) => `(BinTree.leaf $char)
-  | `([tree| $v:num * ($l + $r)]) => `(BinTree.node $v [tree| $l] [tree| $r])
-  | `([tree| $v:str * ($l + $r)]) => `(BinTree.node $v [tree| $l] [tree| $r])
-  | `([tree| $v:char * ($l + $r)]) => `(BinTree.node $v [tree| $l] [tree| $r])
-
+  | `([tree| $v:tree_label]) => do
+    let label ← expandTreeLabel v
+    `(BinTree.leaf $label)
+  | `([tree| $v:tree_label * ($l + $r)]) => do
+    let label ← expandTreeLabel v
+    `(BinTree.node $label [tree| $l] [tree| $r])
 
 #guard
   let actual := [tree| 1 * (2 + 3)]
