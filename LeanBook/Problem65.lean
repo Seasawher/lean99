@@ -48,23 +48,20 @@ def BinTree.relativeLayout (tree : BinTree (α × (Nat × Nat))) : BinTree (α �
   let expected := tree.attachPos! expectedPos
   actual == expected
 
-/-- 二分木のレイアウト情報を受け取って、それのエッジのx座標距離を `2 ^ level` 倍に拡張する -/
-def BinTree.expand (tree : BinTree (α × (Nat × Nat))) (level : Nat) : BinTree (α × (Nat × Nat)) :=
-  -- 各ノードのy座標はそのまま
-  -- x座標を、左からではなくて、木の根ノードから見た相対位置とする
-  let relativeLayout := tree.relativeLayout
-  .empty
+/-- 二分木のレイアウト情報を受け取って、それのエッジのx座標距離を `expand` 倍に拡張する -/
+def BinTree.expand (tree : BinTree (α × (Nat × Nat))) (expand : Nat) : BinTree (α × (Nat × Nat)) :=
+  tree.shift (fun (x, y) => ((x - 1) * expand + 1, y))
 
 -- テストコード
--- #eval
---   let tree := [tree| 'u' * ('p' * (∅ + 'q') + ∅)]
---   let pos := HashMap.ofList [('u', (3, 1)), ('p', (1, 2)), ('q', (2, 3))]
---   let layout := tree.attachPos! pos
---   let actual := layout.expand 1
+#guard
+  let tree := [tree| 'u' * ('p' * (∅ + 'q') + ∅)]
+  let pos := HashMap.ofList [('u', (3, 1)), ('p', (1, 2)), ('q', (2, 3))]
+  let layout := tree.attachPos! pos
+  let actual := layout.expand 2
 
---   let expectedPos := HashMap.ofList [('u', (5, 1)), ('p', (1, 2)), ('q', (3, 3))]
---   let expected := tree.attachPos! expectedPos
---   actual == expected
+  let expectedPos := HashMap.ofList [('u', (5, 1)), ('p', (1, 2)), ('q', (3, 3))]
+  let expected := tree.attachPos! expectedPos
+  actual == expected
 
 /-- P64とは異なる二分木の描画レイアウト。
 
