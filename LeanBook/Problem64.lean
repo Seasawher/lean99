@@ -125,14 +125,14 @@ def BinTree.toHtmlFromLayout (tree : BinTree (α × (Nat × Nat))) (step := 30.0
   svg.toHtml
 
 #html
-  let treeLayout := BinTree.node ("A", (150, 30))
-    (.node ("B", (100, 80)) .empty .empty)
-    (.node ("C", (200, 80))
-      (.node ("D", (170, 130)) .empty .empty)
-      (.node ("E", (230, 130)) .empty .empty))
+  let treeLayout := BinTree.node ("A", (2, 1))
+    (.node ("B", (1, 2)) .empty .empty)
+    (.node ("C", (4, 2))
+      (.node ("D", (3, 3)) .empty .empty)
+      (.node ("E", (5, 3)) .empty .empty))
   BinTree.toHtmlFromLayout treeLayout
 
-#html BinTree.toHtmlFromLayout (BinTree.leaf (3, (20, 20)))
+#html BinTree.toHtmlFromLayout (BinTree.leaf (3, (1, 1)))
 
 /- ## 回答 -/
 
