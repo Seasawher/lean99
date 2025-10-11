@@ -16,9 +16,13 @@ def BinTree.attachPos! {β : Type} [Inhabited β] (tree : BinTree α) (pos : Has
     let p := pos[v]!
     .node (v, p) (l.attachPos! pos) (r.attachPos! pos)
 
-#eval
-  [tree| 'a' * ('b' + 'c')]
+#guard
+  let actual := [tree| 'a' * ('b' + 'c')]
     |>.attachPos! (HashMap.ofList [('a', (2, 1)), ('b', (1, 0)), ('c', (3, 0))])
+  let expected := BinTree.node ('a', (2, 1))
+    (BinTree.leaf ('b', (1, 0)))
+    (BinTree.leaf ('c', (3, 0)))
+  actual == expected
 
 /-- 二分木の根を取得する -/
 def BinTree.root? (tree : BinTree α) : Option α :=
