@@ -137,12 +137,12 @@ def BinTree.toHtmlFromLayout (tree : BinTree (α × (Nat × Nat))) (step := 30.0
 /- ## 回答 -/
 
 /-- ２分木のレイアウト情報が渡されたときに、各ノードのレイアウト位置を一様にずらす -/
-def BinTree.shift {β γ : Type} (tree : BinTree (α × (β × β))) (shiftFn : β × β → γ × γ) : BinTree (α × (γ × γ)) :=
+def BinTree.shift {β γ : Type} (tree : BinTree (α × β)) (shiftFn : β → γ) : BinTree (α × γ) :=
   match tree with
   | .empty => .empty
-  | .node (a, (x, y)) left right =>
-    let (x', y') := shiftFn (x, y)
-    .node (a, (x', y')) (shift left shiftFn) (shift right shiftFn)
+  | .node (a, x) left right =>
+    let x' := shiftFn x
+    .node (a, x') (shift left shiftFn) (shift right shiftFn)
 
 /-- ２分木の幅 -/
 def BinTree.width (tree : BinTree α) : Nat :=
