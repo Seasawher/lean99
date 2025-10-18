@@ -138,3 +138,4 @@ where
 #html BinTree.toHtmlFromLayout (BinTree.layoutLevelConstant [tree| 'a' * (∅ + 'b' * (∅ + 'c'))])
 #html BinTree.toHtmlFromLayout (BinTree.layoutLevelConstant [tree| 1 * (2 * (6 + 7) + 3 * (4 + 5))])
 #html BinTree.toHtmlFromLayout (BinTree.layoutLevelConstant [tree| 'a' * ('b' * (∅ + 'c') + 'd' * ('e' + ∅))])
+#html BinTree.toHtmlFromLayout (BinTree.layoutLevelConstant [tree| 'n' * ('k' * ('c' * ('a' + 'e' * ('d' + 'g')) + 'm') + 'u' * ('p' * (∅  + 'q') + ∅))])

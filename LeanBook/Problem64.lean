@@ -46,9 +46,9 @@ def NodeData.ofPair (f : Frame) (pair : α × Nat × Nat) (step : Float) : NodeD
 private def defaultFrame : Frame where
   xmin := 0
   ymin := 0
-  xSize := 450
-  width := 450
-  height := 450
+  xSize := 1000
+  width := 1000
+  height := 1000
 
 /-- ノード（円とラベル）を作成する -/
 def createNodeElement (f : Frame) (node : NodeData f) (config : Config) : Array (Element f) :=
