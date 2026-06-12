@@ -1,7 +1,10 @@
-name: Update Lean
+name: run lean-update
 on:
   schedule:
-    - cron: "0 11 * * *"
+    - cron: "0 0 * * *"
+  push:
+    branches:
+      - main
   workflow_dispatch:
 
 permissions:
@@ -14,6 +17,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v5
-      - name: Update Lean project
+        uses: actions/checkout@v6
+      - name: Check whether test branch exists
+        id: branch
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh api repos/leanprover-community/lean-update/branches/test >/dev/null 2>&1; then
+            echo "ref=test" >> "$GITHUB_OUTPUT"
+          else
+            echo "ref=main" >> "$GITHUB_OUTPUT"
+          fi
+      - name: run lean-update@test, which is beta version of lean-update
+        if: ${{ steps.branch.outputs.ref == 'test'}}
+        uses: leanprover-community/lean-update@test
+      - name: run lean-update@main
+        if: ${{ steps.branch.outputs.ref == 'main'}}
         uses: leanprover-community/lean-update@main
