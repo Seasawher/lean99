@@ -1,7 +1,10 @@
 name: run lean-update
 on:
-  schedule:
-    - cron: "0 0 * * *"
+  # lean-update アクションのカナリアテストとして使用するため、
+  # 存在しないブランチを参照してエラーにならないよう、
+  # スケジュールによる自動実行はしない。
+  # schedule:
+  #   - cron: "0 0 * * *"
   push:
     branches:
       - main
